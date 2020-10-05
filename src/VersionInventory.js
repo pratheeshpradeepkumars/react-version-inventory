@@ -29,11 +29,12 @@ export default function VersionInventory() {
   let [calutatedVersionList, setcalutatedVersionList] = useState(null);
   let [showMore, setshowMore] = useState(false);
   let [versionEdit, setversionEdit] = useState(null);
+  let [isEditing, setisEditing] = useState(false);
 
   const calcutateVersionList = versions => {
     let list = [...versions];
-    if (versions.length > 3) { 
-      setcalutatedVersionList(list.splice(0, 3)); 
+    if (versions.length > 3) {
+      setcalutatedVersionList(list.splice(0, 3));
       setshowMore(true);
     } else {
       setcalutatedVersionList(list);
@@ -79,6 +80,65 @@ export default function VersionInventory() {
     setversionEdit(null);
   };
 
+  let [addType, setaddType] = useState(null);
+  let initialVersionDetailsState = {
+    name: "",
+    source: "",
+    description: ""
+  };
+  let [versionDetails, setversionDetails] = useState(
+    initialVersionDetailsState
+  );
+
+  // reset versionDetails
+  const resetVersionDetails = () => {
+    setversionDetails(initialVersionDetailsState);
+  };
+
+  // handle add / update type (true for add , false for update)
+  const handleAddType = type => {
+    setaddType(type);
+    setisEditing(true);
+  };
+
+  // Add version to list
+  const addVersion = () => {
+    const { name, source } = versionDetails;
+    let newList = [...versionList, ...versionDetails];
+    if (name && name !== "" && source && source !== "") {
+      setshowMore(false);
+      setversionList(newList);
+      setcalutatedVersionList(newList);
+      resetVersionDetails();
+    } else {
+      console.log("Please enter valid details")
+    }
+  };
+
+  // Update version to list
+  const updateVersion = () => {};
+
+  // Version add/update handleer
+  const handleVersionAddOrUpdate = () => {
+    console.log(addType);
+    if (addType) {
+      addVersion();
+    } else {
+      updateVersion();
+    }
+  };
+
+  // handle change event
+  const handleVersionFieldsChange = e => {
+    var newObj = {
+      [e.target.name]: e.target.value
+    };
+    setversionDetails(prevState => ({
+      ...prevState,
+      ...newObj
+    }));
+  };
+
   // on component mount
   useEffect(() => {
     console.log("Version inventory initial");
@@ -90,21 +150,57 @@ export default function VersionInventory() {
   }, []);
 
   return (
-    <div className="version-inventory">
-      <h1>Version</h1>
-      <ul>
-        {calutatedVersionList &&
-          calutatedVersionList.map(list => (
-            <VersionList
-              key={list.name}
-              {...list}
-              editVersionName={editVersionName}
-              saveVersionDetails={saveVersionDetails}
-              versionEdit={versionEdit}
+    <React.Fragment>
+      <a onClick={() => handleAddType(true)}>Add version</a>
+      <hr />
+      {addType && (
+        <div className="vpb-version-addition">
+          <div>
+            <label>Version name</label>
+            <input
+              type="text"
+              name="name"
+              value={versionDetails.name}
+              onChange={handleVersionFieldsChange}
             />
-          ))}
-      </ul>
-      {showMore && <a onClick={showMoreData}>Show more</a>}
-    </div>
+          </div>
+          <div>
+            <label>Source name</label>
+            <input
+              type="text"
+              name="source"
+              value={versionDetails.source}
+              onChange={handleVersionFieldsChange}
+            />
+          </div>
+          <div>
+            <label>Description</label>
+            <textarea
+              name="description"
+              value={versionDetails.description}
+              onChange={handleVersionFieldsChange}
+            />
+          </div>
+          <button onClick={handleVersionAddOrUpdate}>Add</button>
+        </div>
+      )}
+      <hr />
+      <div className="vpb-version-inventory">
+        <h1>Version</h1>
+        <ul>
+          {calutatedVersionList &&
+            calutatedVersionList.map(list => (
+              <VersionList
+                key={list.name}
+                {...list}
+                editVersionName={editVersionName}
+                saveVersionDetails={saveVersionDetails}
+                versionEdit={versionEdit}
+              />
+            ))}
+        </ul>
+        {showMore && <a onClick={showMoreData}>Show more</a>}
+      </div>
+    </React.Fragment>
   );
 }
