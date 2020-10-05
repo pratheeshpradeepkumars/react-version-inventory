@@ -4,7 +4,8 @@ export default function VersionList({
   name,
   versionEdit,
   editVersionName,
-  saveVersionDetails
+  saveVersionDetails,
+  deleteVersion
 }) {
   let [inputValue, setinputValue] = useState(name);
   let [isEditing, setisEditing] = useState(false);
@@ -38,7 +39,7 @@ export default function VersionList({
     }
     setisEditing(true);
   };
- 
+
   // handle input focus
   const handleFocus = e => {
     console.log("hello");
@@ -59,7 +60,9 @@ export default function VersionList({
           onFocus={e => e.currentTarget.select()}
         />
       ) : (
-        <div>{name}</div>
+        <div>
+          {name} | <a onClick={() => deleteVersion(name)}>Delete</a>
+        </div>
       )}
     </li>
   );

@@ -15,12 +15,12 @@ const initialData = [
   {
     name: "Version_2",
     source: "master",
-    description: ""
-  },
+    description: "" 
+  }, 
   {
     name: "Version_3",
     source: "master",
-    description: ""
+    description: "" 
   }
 ];
 
@@ -130,6 +130,15 @@ export default function VersionInventory() {
   // Update version to list
   const updateVersion = () => {};
 
+  // Delete version
+  const deleteVersion = (name) => {
+    const newList = versionList.filter(list => list.name !== name);
+    setversionList(newList);
+    //const calcList = calutatedVersionList.filter(list => list.name !== name);
+    setshowMore(false);
+    setcalutatedVersionList(newList); 
+  }
+
   // Version add/update handleer
   const handleVersionAddOrUpdate = () => {
     console.log(addType);
@@ -207,6 +216,7 @@ export default function VersionInventory() {
                 key={list.name}
                 {...list}
                 editVersionName={editVersionName}
+                deleteVersion={deleteVersion}
                 saveVersionDetails={saveVersionDetails}
                 versionEdit={versionEdit}
               />
