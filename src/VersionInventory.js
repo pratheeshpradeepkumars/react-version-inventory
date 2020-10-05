@@ -70,6 +70,17 @@ export default function VersionInventory() {
       }
       return list;
     });
+    const cloneVersionist = versionList.map(list => {
+      if (list.name === versionOldName) {
+        const updatedList = {
+          ...list,
+          name: versionName
+        };
+        return updatedList;
+      }
+      return list;
+    });
+    setversionList(cloneVersionist);
     setcalutatedVersionList(newVersionList);
   };
 
@@ -91,8 +102,9 @@ export default function VersionInventory() {
   );
 
   // reset versionDetails
-  const resetVersionDetails = () => {
+  const resetVersionDetails = close => {
     setversionDetails(initialVersionDetailsState);
+    close && setisEditing(false);
   };
 
   // handle add / update type (true for add , false for update)
@@ -111,7 +123,7 @@ export default function VersionInventory() {
       setcalutatedVersionList(newList);
       resetVersionDetails();
     } else {
-      console.log("Please enter valid details")
+      console.log("Please enter valid details");
     }
   };
 
@@ -153,21 +165,21 @@ export default function VersionInventory() {
     <React.Fragment>
       <a onClick={() => handleAddType(true)}>Add version</a>
       <hr />
-      {addType && (
+      {isEditing && (
         <div className="vpb-version-addition">
           <div>
             <label>Version name</label>
             <input
               type="text"
-              name="name"
-              value={versionDetails.name}
-              onChange={handleVersionFieldsChange}
+              name="name" 
+              value={versionDetails.name} 
+              onChange={handleVersionFieldsChange} 
             />
           </div>
           <div>
             <label>Source name</label>
             <input
-              type="text"
+              type="text" 
               name="source"
               value={versionDetails.source}
               onChange={handleVersionFieldsChange}
@@ -182,6 +194,7 @@ export default function VersionInventory() {
             />
           </div>
           <button onClick={handleVersionAddOrUpdate}>Add</button>
+          <button onClick={() => resetVersionDetails(true)}>Cancel</button>
         </div>
       )}
       <hr />
