@@ -1,31 +1,38 @@
 import React, { useEffect, useState } from "react";
 import VersionList from "./VersionList";
 
+import "./style.css";
+
 const initialData = [
   {
     name: "master",
     source: "master",
-    description: ""
+    description: "",
+    lock: true
   },
   {
     name: "Version_1",
     source: "master",
-    description: ""
+    description: "",
+    lock: false
   },
   {
     name: "Version_2",
     source: "master",
-    description: ""
+    description: "",
+    lock: false
   },
   {
     name: "Version_3",
     source: "master",
-    description: ""
+    description: "",
+    lock: false
   },
   {
     name: "Version_4",
     source: "master",
-    description: ""
+    description: "",
+    lock: false
   }
 ];
 
@@ -103,14 +110,14 @@ export default function VersionInventory() {
     description: "",
     visible: true
   };
-  let [versionDetails, setversionDetails] = useState( 
+  let [versionDetails, setversionDetails] = useState(
     initialVersionDetailsState
   );
 
   // reset versionDetails
   const resetVersionDetails = close => {
     setversionDetails(() => ({
-      ...initialVersionDetailsState, 
+      ...initialVersionDetailsState,
       source: versionList && versionList.length > 0 ? versionList[0].source : ""
     }));
     setaddType(true);
@@ -216,72 +223,90 @@ export default function VersionInventory() {
 
   return (
     <React.Fragment>
-      <a onClick={() => handleAddType(true)}>Add version</a>
-      <hr />
-      {isEditing && (
-        <div className="vpb-version-addition">
-          <div>
-            <label>Version name</label>
-            <input
-              type="text"
-              name="name"
-              value={versionDetails.name}
-              onChange={handleVersionFieldsChange}
-            />
-          </div>
-          <div>
-            <label>Source name</label>
-            {addType ? (
-              <select
-                name="source"
-                value={versionDetails.source}
-                onChange={handleVersionFieldsChange}
-              >
-                {versionList &&
-                  versionList.map(list => (
-                    <option value={list.name}>{list.name}</option>
-                  ))}
-              </select>
-            ) : (
-              <label>: {versionDetails.source}</label>
-            )}
-          </div>
-          <div>
-            <label>Description</label>
-            <textarea
-              name="description"
-              value={versionDetails.description}
-              onChange={handleVersionFieldsChange}
-            />
-          </div>
-          <button onClick={handleVersionAddOrUpdate}>
-            {addType ? "Add" : "Update"}
-          </button>
-          <button onClick={() => resetVersionDetails(true)}>Cancel</button>
+      <div className="vpb-version-list-container">
+        <div className="version-add">
+          <span className="version-add-selector">
+            <a className="icon-add">+</a>
+            <a
+              className="version-add-label"
+              onClick={() => handleAddType(true)}
+            >
+              Add Version
+            </a>
+          </span>
         </div>
-      )}
-      <hr />
-      <div className="vpb-version-inventory">
-        <h1>Version</h1>
-        <ul>
-          {versionList &&
-            versionList.map(list => {
-              return (
-                list.visible && (
-                  <VersionList
-                    key={list.name}
-                    {...list}
-                    editVersionName={editVersionName}
-                    deleteVersion={deleteVersion}
-                    updateVersion={updateVersion}
-                    saveVersionDetails={saveVersionDetails}
-                    versionEdit={versionEdit}
-                  />
-                )
-              );
-            })}
-        </ul>
-        {showMore && <a onClick={() => showMoreData(versionList)}>Show more</a>}
+
+        {isEditing && (
+          <div className="vpb-version-addition">
+            <div>
+              <label>Version name</label>
+              <input
+                type="text"
+                name="name" 
+                value={versionDetails.name}
+                onChange={handleVersionFieldsChange}
+              />
+            </div>  
+            <div>
+              <label>Source name</label>
+              {addType ? (
+                <select
+                  name="source"
+                  value={versionDetails.source}
+                  onChange={handleVersionFieldsChange}
+                >
+                  {versionList &&
+                    versionList.map(list => (
+                      <option value={list.name}>{list.name}</option>
+                    ))}
+                </select>
+              ) : (
+                <label>: {versionDetails.source}</label>
+              )}
+            </div>
+            <div>
+              <label>Description</label>
+              <textarea
+                name="description"
+                value={versionDetails.description}
+                onChange={handleVersionFieldsChange}
+              />
+            </div>
+            <button onClick={handleVersionAddOrUpdate}>
+              {addType ? "Add" : "Update"}
+            </button>
+            <button onClick={() => resetVersionDetails(true)}>Cancel</button>
+          </div>
+        )}
+
+        <div className="version-container">
+          <ul class="version-list-wrapper">
+            {versionList &&
+              versionList.map(list => {
+                return (
+                  list.visible && (
+                    <VersionList
+                      key={list.name}
+                      {...list}
+                      editVersionName={editVersionName}
+                      deleteVersion={deleteVersion}
+                      updateVersion={updateVersion}
+                      saveVersionDetails={saveVersionDetails}
+                      versionEdit={versionEdit}
+                    />
+                  )
+                );
+              })}
+          </ul>
+          {showMore && (
+            <div
+              class="show-all-version"
+              onClick={() => showMoreData(versionList)}
+            >
+              <span>View All</span>
+            </div>
+          )}
+        </div>
       </div>
     </React.Fragment>
   );

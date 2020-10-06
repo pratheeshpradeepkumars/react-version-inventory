@@ -1,3 +1,163 @@
-h1, p {
-  font-family: Lato;
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+.vpb-version-list-container {
+  background: #ffffff;
+  box-shadow: 0px 1px 11px #00000029;
+  width: 372px;
+  min-height: 250px;
+}
+.vpb-version-list-container .version-add {
+  padding: 15px;
+  margin-left: 5px;
+}
+.vpb-version-list-container .version-add .version-add-selector {
+  cursor: pointer;
+  color: #04acec;
+  position: relative;
+}
+.vpb-version-list-container .version-add .icon-add {
+  padding: 1px 5px;
+  border: 1px solid #04acec;
+  border-radius: 50%;
+}
+.vpb-version-list-container .version-add .version-add-label {
+  font-size: 14px;
+  margin-left: 10px;
+}
+.vpb-version-list-container .show-all-version {
+  font-size: 14px;
+  color: #04acec;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.vpb-version-list-container .show-all-version span {
+  cursor: pointer;
+}
+.vpb-version-list-container .version-container {
+  overflow-y: auto;
+  height: 235px;
+  overflow-x: hidden;
+}
+.vpb-version-list-container .version-list-wrapper {
+  max-width: 100%;
+  padding: 0;
+  margin: 0;
+}
+.vpb-version-list-container .version-list-wrapper .version-list-block {
+  height: 55px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  padding: 5px 18px;
+  text-align: left;
+  border: solid 1px #d6d6d6;
+  margin: -1px;
+}
+.vpb-version-list-container .version-list-wrapper .version-list-block.active-version {
+  background: #f2ebfb;
+}
+.vpb-version-list-container .version-list-wrapper .version-list-block .version-list-left {
+  display: flex;
+  align-items: center;
+  flex: 4;
+}
+.vpb-version-list-container .version-list-wrapper .version-list-block .version-list-left .version-status .switch {
+  display: inline-block;
+  cursor: pointer;
+}
+.vpb-version-list-container .version-list-wrapper .version-list-block .version-list-left .version-status .slider {
+  width: 1.9375rem;
+  height: 1.125rem;
+  background-color: #d0cece;
+  border-radius: 30px;
+  padding: 0;
+  transition: background-color 250ms ease 0s;
+}
+.vpb-version-list-container .version-list-wrapper .version-list-block .version-list-left .version-status .thumb {
+  width: 1.129rem;
+  height: 1.129rem;
+  background-color: #a1a1a1;
+  border-radius: 50%;
+  transition: transform 250ms ease 0s;
+}
+.vpb-version-list-container .version-list-wrapper .version-list-block .version-list-left .version-status .checkbox {
+  /* visually hidden */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+.vpb-version-list-container .version-list-wrapper .version-list-block .version-list-left .version-status .checkbox:focus + .slider {
+  box-shadow: 0 0 0 1px rgba(66, 153, 225, 0.5);
+}
+.vpb-version-list-container .version-list-wrapper .version-list-block .version-list-left .version-status .checkbox:checked + .slider {
+  background-color: #ade5fb;
+}
+.vpb-version-list-container .version-list-wrapper .version-list-block .version-list-left .version-status .checkbox:checked + .slider .thumb {
+  background-color: #04acec;
+}
+.vpb-version-list-container .version-list-wrapper .version-list-block .version-list-left .version-status .checkbox:checked + .slider .thumb {
+  transform: translateX(0.9rem);
+}
+.vpb-version-list-container .version-list-wrapper .version-list-block .version-list-left .version-status .checkbox:disabled + .slider {
+  opacity: 0.25;
+}
+.vpb-version-list-container .version-list-wrapper .version-list-block .version-list-left .version-description {
+  margin-left: 20px;
+}
+.vpb-version-list-container .version-list-wrapper .version-list-block .version-list-left .version-description .description .version-name {
+  color: #000000;
+  opacity: 1;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 2px;
+  padding: 5px 5px;
+  transition: 0.5s ease;
+}
+.vpb-version-list-container .version-list-wrapper .version-list-block .version-list-left .version-description .description .version-name:hover {
+  background: #eee;
+}
+.vpb-version-list-container .version-list-wrapper .version-list-block .version-list-left .version-description .description .version-info {
+  margin-top: 8px;
+  color: #949494;
+  font-size: 12px;
+  padding-left: 5px;
+}
+.vpb-version-list-container .version-list-wrapper .version-list-block .version-list-left .version-description .description .author {
+  margin-left: 5px;
+  width: 40%;
+}
+.vpb-version-list-container .version-list-wrapper .version-list-block .version-list-left .version-description .description .author::before {
+  display: inline-block;
+  content: "";
+  -webkit-border-radius: 0.375rem;
+  border-radius: 0.375rem;
+  height: 0.25rem;
+  width: 0.25rem;
+  margin-right: 0.2rem;
+  background-color: #bdbdbd;
+  position: relative;
+  top: -2px;
+}
+.vpb-version-list-container .version-list-wrapper .version-list-block .version-list-right {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+  align-items: center;
+}
+.vpb-version-list-container .version-list-wrapper .version-list-block .version-list-right .active-state {
+  background: #04acec;
+  border-radius: 10px;
+  font-size: 13px;
+  padding: 5px 20px;
+  color: #ffff;
+  margin-right: 20px;
 }
