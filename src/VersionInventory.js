@@ -103,26 +103,33 @@ export default function VersionInventory() {
     description: "",
     visible: true
   };
-  let [versionDetails, setversionDetails] = useState(
+  let [versionDetails, setversionDetails] = useState( 
     initialVersionDetailsState
   );
 
   // reset versionDetails
   const resetVersionDetails = close => {
-    setversionDetails(initialVersionDetailsState);
+    setversionDetails(() => ({
+      ...initialVersionDetailsState, 
+      source: versionList && versionList.length > 0 ? versionList[0].source : ""
+    }));
     setaddType(true);
     close && setisEditing(false);
   };
 
   // handle add / update type (true for add , false for update)
   const handleAddType = type => {
+    setversionDetails(prevState => ({
+      ...prevState,
+      source: versionList && versionList.length > 0 ? versionList[0].source : ""
+    }));
     setaddType(type);
     setisEditing(true);
   };
 
   // Add version to list
   const addVersion = () => {
-    const { name, source, description } = versionDetails;
+    const { name, source } = versionDetails;
     let newList = [...versionList, ...versionDetails];
     if (name && name !== "" && source && source !== "") {
       setshowMore(false);
@@ -161,7 +168,6 @@ export default function VersionInventory() {
       }
       return list;
     });
-    console.log(cloneVersionist);
     setversionList(cloneVersionist);
     resetVersionDetails(true);
   };
@@ -225,12 +231,20 @@ export default function VersionInventory() {
           </div>
           <div>
             <label>Source name</label>
-            <input
-              type="text"
-              name="source"
-              value={versionDetails.source}
-              onChange={handleVersionFieldsChange}
-            />
+            {addType ? (
+              <select
+                name="source"
+                value={versionDetails.source}
+                onChange={handleVersionFieldsChange}
+              >
+                {versionList &&
+                  versionList.map(list => (
+                    <option value={list.name}>{list.name}</option>
+                  ))}
+              </select>
+            ) : (
+              <label>: {versionDetails.source}</label>
+            )}
           </div>
           <div>
             <label>Description</label>
