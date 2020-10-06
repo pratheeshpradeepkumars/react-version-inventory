@@ -2,13 +2,17 @@ import React, { useState } from "react";
 
 export default function VersionList({
   name,
+  source,
+  description,
   versionEdit,
   editVersionName,
+  updateVersion,
   saveVersionDetails,
   deleteVersion
 }) {
   let [inputValue, setinputValue] = useState(name);
   let [isEditing, setisEditing] = useState(false);
+  const listDetails = { name, source, description };
 
   // handle onBlur
   const handleOnBlur = (e, oldName) => {
@@ -61,7 +65,8 @@ export default function VersionList({
         />
       ) : (
         <div>
-          {name} | <a onClick={() => deleteVersion(name)}>Delete</a>
+          {name} | <a onClick={() => deleteVersion(name)}>Delete</a> |{" "}
+          <a onClick={() => updateVersion(listDetails)}>Update</a>
         </div>
       )}
     </li>

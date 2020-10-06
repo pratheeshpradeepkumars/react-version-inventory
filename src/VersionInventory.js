@@ -15,42 +15,58 @@ const initialData = [
   {
     name: "Version_2",
     source: "master",
-    description: "" 
-  }, 
+    description: ""
+  },
   {
     name: "Version_3",
     source: "master",
-    description: "" 
+    description: ""
+  },
+  {
+    name: "Version_4",
+    source: "master",
+    description: ""
   }
 ];
 
 export default function VersionInventory() {
-  let [versionList, setversionList] = useState(null);
-  let [calutatedVersionList, setcalutatedVersionList] = useState(null);
-  let [showMore, setshowMore] = useState(false);
-  let [versionEdit, setversionEdit] = useState(null);
-  let [isEditing, setisEditing] = useState(false);
+  const LIMIT = 3; // show more limit
+  let [versionList, setversionList] = useState(null); // List of versions
+  let [showMore, setshowMore] = useState(false); // true to show show more button
+  let [versionEdit, setversionEdit] = useState(null); // edit version name, shorcut method
+  let [isEditing, setisEditing] = useState(false); // true to open add/edit form
 
-  const calcutateVersionList = versions => {
-    let list = [...versions];
-    if (versions.length > 3) {
-      setcalutatedVersionList(list.splice(0, 3));
-      setshowMore(true);
-    } else {
-      setcalutatedVersionList(list);
-      setshowMore(false);
-    }
+  // Process the versions based on limit and show only LIMIT count in the dom
+  const precessVersionList = versions => {
+    const versionCount = versions.length;
+    let newList = versions.map((version, index) => {
+      let limit = index + 1;
+      let visible = true;
+      if (limit > LIMIT && versionCount > LIMIT) {
+        visible = false;
+      } else {
+        visible = true;
+      }
+      const updatedList = {
+        ...version,
+        visible
+      };
+      return updatedList;
+    });
+    setversionList(newList);
+    newList.length <= LIMIT && setshowMore(false);
   };
 
-  // Show all versions if more than 3
-  const showMoreData = () => {
-    const cloneVersionist = [...versionList]; // all versions
-    const remainingVersionList = cloneVersionist.splice(
-      3,
-      cloneVersionist.length
-    ); // remainig versions after initial 3
-    const newVersionList = [...calutatedVersionList, ...remainingVersionList];
-    setcalutatedVersionList(newVersionList);
+  // Show all versions if more than LIMIT
+  const showMoreData = versions => {
+    let newList = versions.map((version, index) => {
+      const updatedList = {
+        ...version,
+        visible: true
+      };
+      return updatedList;
+    });
+    setversionList(newList);
     setshowMore(false);
   };
 
@@ -60,16 +76,6 @@ export default function VersionInventory() {
 
   //Process version list after updation
   const processVersionListAfterUpdation = (versionName, versionOldName) => {
-    var newVersionList = calutatedVersionList.map(list => {
-      if (list.name === versionOldName) {
-        const updatedList = {
-          ...list,
-          name: versionName
-        };
-        return updatedList;
-      }
-      return list;
-    });
     const cloneVersionist = versionList.map(list => {
       if (list.name === versionOldName) {
         const updatedList = {
@@ -81,7 +87,6 @@ export default function VersionInventory() {
       return list;
     });
     setversionList(cloneVersionist);
-    setcalutatedVersionList(newVersionList);
   };
 
   // Save updated version data
@@ -95,7 +100,8 @@ export default function VersionInventory() {
   let initialVersionDetailsState = {
     name: "",
     source: "",
-    description: ""
+    description: "",
+    visible: true
   };
   let [versionDetails, setversionDetails] = useState(
     initialVersionDetailsState
@@ -104,6 +110,7 @@ export default function VersionInventory() {
   // reset versionDetails
   const resetVersionDetails = close => {
     setversionDetails(initialVersionDetailsState);
+    setaddType(true);
     close && setisEditing(false);
   };
 
@@ -115,12 +122,11 @@ export default function VersionInventory() {
 
   // Add version to list
   const addVersion = () => {
-    const { name, source } = versionDetails;
+    const { name, source, description } = versionDetails;
     let newList = [...versionList, ...versionDetails];
     if (name && name !== "" && source && source !== "") {
       setshowMore(false);
-      setversionList(newList);
-      setcalutatedVersionList(newList);
+      showMoreData(newList);
       resetVersionDetails();
     } else {
       console.log("Please enter valid details");
@@ -128,24 +134,55 @@ export default function VersionInventory() {
   };
 
   // Update version to list
-  const updateVersion = () => {};
+  const updateVersion = ({ name, source, description }) => {
+    setaddType(false);
+    setisEditing(true);
+    setversionDetails(prevState => ({
+      ...prevState,
+      name,
+      source,
+      description,
+      oldName: name
+    }));
+  };
+
+  // Save updated data
+  const saveUpdatedData = () => {
+    const { name, source, description, oldName } = versionDetails;
+    const cloneVersionist = versionList.map(list => {
+      if (list.name === oldName) {
+        const updatedList = {
+          ...list,
+          name,
+          source,
+          description
+        };
+        return updatedList;
+      }
+      return list;
+    });
+    console.log(cloneVersionist);
+    setversionList(cloneVersionist);
+    resetVersionDetails(true);
+  };
 
   // Delete version
-  const deleteVersion = (name) => {
+  const deleteVersion = name => {
+    resetVersionDetails();
     const newList = versionList.filter(list => list.name !== name);
-    setversionList(newList);
-    //const calcList = calutatedVersionList.filter(list => list.name !== name);
-    setshowMore(false);
-    setcalutatedVersionList(newList); 
-  }
+    if (showMore) {
+      precessVersionList(newList);
+    } else {
+      showMoreData(newList);
+    }
+  };
 
   // Version add/update handleer
   const handleVersionAddOrUpdate = () => {
-    console.log(addType);
     if (addType) {
       addVersion();
     } else {
-      updateVersion();
+      saveUpdatedData();
     }
   };
 
@@ -164,7 +201,8 @@ export default function VersionInventory() {
   useEffect(() => {
     console.log("Version inventory initial");
     setversionList(initialData);
-    calcutateVersionList(initialData);
+    initialData.length > LIMIT && setshowMore(true);
+    precessVersionList(initialData);
     return () => {
       // Clean up
     };
@@ -180,15 +218,15 @@ export default function VersionInventory() {
             <label>Version name</label>
             <input
               type="text"
-              name="name" 
-              value={versionDetails.name} 
-              onChange={handleVersionFieldsChange} 
+              name="name"
+              value={versionDetails.name}
+              onChange={handleVersionFieldsChange}
             />
           </div>
           <div>
             <label>Source name</label>
             <input
-              type="text" 
+              type="text"
               name="source"
               value={versionDetails.source}
               onChange={handleVersionFieldsChange}
@@ -202,7 +240,9 @@ export default function VersionInventory() {
               onChange={handleVersionFieldsChange}
             />
           </div>
-          <button onClick={handleVersionAddOrUpdate}>Add</button>
+          <button onClick={handleVersionAddOrUpdate}>
+            {addType ? "Add" : "Update"}
+          </button>
           <button onClick={() => resetVersionDetails(true)}>Cancel</button>
         </div>
       )}
@@ -210,19 +250,24 @@ export default function VersionInventory() {
       <div className="vpb-version-inventory">
         <h1>Version</h1>
         <ul>
-          {calutatedVersionList &&
-            calutatedVersionList.map(list => (
-              <VersionList
-                key={list.name}
-                {...list}
-                editVersionName={editVersionName}
-                deleteVersion={deleteVersion}
-                saveVersionDetails={saveVersionDetails}
-                versionEdit={versionEdit}
-              />
-            ))}
+          {versionList &&
+            versionList.map(list => {
+              return (
+                list.visible && (
+                  <VersionList
+                    key={list.name}
+                    {...list}
+                    editVersionName={editVersionName}
+                    deleteVersion={deleteVersion}
+                    updateVersion={updateVersion}
+                    saveVersionDetails={saveVersionDetails}
+                    versionEdit={versionEdit}
+                  />
+                )
+              );
+            })}
         </ul>
-        {showMore && <a onClick={showMoreData}>Show more</a>}
+        {showMore && <a onClick={() => showMoreData(versionList)}>Show more</a>}
       </div>
     </React.Fragment>
   );
